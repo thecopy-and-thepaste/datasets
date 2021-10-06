@@ -1,0 +1,18 @@
+version: "2"
+services:
+  content:
+    container_name: "dataset_wrapper"
+    build:
+      context: .
+    image: "dataset_wrapper"
+    ports:
+      - "8081:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_URL=YOUR_DB
+      - PORT=3000
+      - ITEMS_COLLECTION=YOUR_ITEMS_COLLECTION
+      - CATS_COLLECTION=YOUR_CATS_COLLECTION
+      - ANNS_COLLECTION=YOUR_ANNS_COLLECTION
+      - API_PREFIX=BASE_API
+    restart: unless-stopped
