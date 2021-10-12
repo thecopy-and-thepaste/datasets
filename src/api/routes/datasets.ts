@@ -17,27 +17,24 @@ export default (app: Router) => {
                 const name = req.params['dataset_name']
                 const start = req.query['start'] as string || "0"
 
-                Dataset.aggregate([
-                    {
-                        '$match': {
+                Dataset
+                    .find(
+                        {
                             '$and': [
                                 { 'name': name },
                                 { 'version': version },
                                 { 'start': parseInt(start) },
                             ]
-                        }
-                    },
-                    {
-                        '$project': {
+                        },
+                        {
                             "start": 1,
                             "end": 1,
                             "has_next": 1,
                             'items': 1,
+                            'total': 1,
                             _id: 0
-                        }
-                    }
-                ])
 
+                        })
                     .exec((err, docs) => {
                         if (err) {
                             Logger.error(err)

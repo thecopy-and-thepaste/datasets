@@ -12,8 +12,13 @@ export default (app: Router) => {
         (req: Request, res: Response, next: NextFunction) => {
             try {
                 const version = parseInt(req.params['version'])
+                const start = req.query['start'] as string || "0"
 
-                Cat.find({ 'version': version }, {'_id': 0})
+                Cat
+                    .find({
+                        'version': version,
+                        'start': parseInt(start)
+                    }, { '_id': 0 })
                     .exec((err, docs) => {
                         if (err) {
                             Logger.error(err)
@@ -24,9 +29,14 @@ export default (app: Router) => {
                         }
 
                         if (docs) {
-                            return res
-                                .json({ data: docs })
-                                .status(200)
+                            if (docs.length > 1)
+                                return res
+                                    .json({ error: "We found multiple entries for your query" })
+                                    .status(500)
+                            else
+                                return res
+                                    .json({ data: docs[0] })
+                                    .status(200)
                         }
                     })
             } catch (e) {

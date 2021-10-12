@@ -13,41 +13,72 @@ export default (app: Router) => {
             try {
                 const version = parseInt(req.params['version'])
 
+                const start = req.query['start'] as string || "0"
+
                 const lte = req.query.lte as string
                 const gte = req.query.gte as string
-                let items = []
-
-                items.push({ version: version })
+                let cond_items = []
 
                 if (lte != null) {
                     const low_range = parseFloat(lte)
-                    items.push({ score: { $lte: low_range } })
+                    cond_items.push({ $lte: ['$$ann.score', low_range] })
                 }
 
                 if (gte != null) {
                     const up_range = parseFloat(gte)
-                    items.push({ score: { $gte: up_range } })
+                    cond_items.push({ $gte: ['$$ann.score', up_range] })
                 }
 
-                let query = {
-                    $and: items
+                let cond = {
+                    $and: cond_items
                 }
 
-                Ann.find(query, { '_id': 0 })
-                    .exec((err, docs) => {
-                        if (err) {
-                            Logger.error(err)
-                            return res
-                                .json({ error: err })
-                                .status(500)
+                Ann.aggregate([
+                    {
+                        $match: { 'version': version, 'start': parseInt(start) }
+                    },
+                    {
+                        $project: {
+                            'start': 1,
+                            'version': 1,
+                            'end': 1,
+                            'has_next': 1,
+                            'anns': {
+                                $filter: {
+                                    input: '$anns',
+                                    as: 'ann',
+                                    cond: cond
+                                }
+                            }
                         }
+                    },
+                    {
+                        $project: {
+                            'start': 1,
+                            'version': 1,
+                            'end': 1,
+                            'has_next': 1,
+                            'anns': 1,
+                            'count': {
+                                $size: '$anns'
+                            }
+                        }
+                    }
 
-                        if (docs) {
-                            return res
-                                .json({ data: docs })
-                                .status(200)
-                        }
-                    })
+                ]).exec((err, docs) => {
+                    if (err) {
+                        Logger.error(err)
+                        return res
+                            .json({ error: err })
+                            .status(500)
+                    }
+
+                    if (docs) {
+                        return res
+                            .json({ data: docs })
+                            .status(200)
+                    }
+                })
             } catch (e) {
                 Logger.error(e)
                 return next(e)
