@@ -43,6 +43,7 @@ export default (app: Router) => {
                             'version': 1,
                             'end': 1,
                             'has_next': 1,
+                            'total': 1,
                             'anns': {
                                 $filter: {
                                     input: '$anns',
@@ -57,11 +58,12 @@ export default (app: Router) => {
                             'start': 1,
                             'version': 1,
                             'end': 1,
+                            'total': 1,
                             'has_next': 1,
-                            'anns': 1,
                             'count': {
                                 $size: '$anns'
-                            }
+                            },
+                            "anns": 1,
                         }
                     }
 
@@ -74,9 +76,18 @@ export default (app: Router) => {
                     }
 
                     if (docs) {
+                        let anns = docs
+                            .map(x => x['anns'])
+                            .reduce((acc, val) => [...acc, ...val], []);
+                            
+                        let doc = docs[0]
+                        doc['anns'] = anns
+
+
                         return res
-                            .json({ data: docs })
+                            .json({ data: doc })
                             .status(200)
+
                     }
                 })
             } catch (e) {

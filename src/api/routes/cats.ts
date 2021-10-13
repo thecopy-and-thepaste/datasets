@@ -29,14 +29,14 @@ export default (app: Router) => {
                         }
 
                         if (docs) {
-                            if (docs.length > 1)
-                                return res
-                                    .json({ error: "We found multiple entries for your query" })
-                                    .status(500)
-                            else
-                                return res
-                                    .json({ data: docs[0] })
-                                    .status(200)
+                            let anns = docs.map(x => x['cats'])
+                            let doc = docs[0]
+                            doc['cats'] = anns
+
+
+                            return res
+                                .json({ data: doc })
+                                .status(200)
                         }
                     })
             } catch (e) {

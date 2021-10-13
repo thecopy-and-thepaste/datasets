@@ -19,6 +19,9 @@ const Ann = new mongoose.Schema(
         },
         version: {
             type: Number
+        },
+        anns: {
+            type: []
         }
     },
     { strict: false }
