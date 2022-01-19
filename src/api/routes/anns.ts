@@ -41,6 +41,7 @@ export default (app: Router) => {
                         $project: {
                             'start': 1,
                             'version': 1,
+                            'version_description': 1,
                             'end': 1,
                             'has_next': 1,
                             'total': 1,
@@ -57,6 +58,7 @@ export default (app: Router) => {
                         $project: {
                             'start': 1,
                             'version': 1,
+                            'version_description': 1,
                             'end': 1,
                             'total': 1,
                             'has_next': 1,
