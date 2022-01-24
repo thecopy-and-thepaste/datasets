@@ -11,7 +11,7 @@ export default (app: Router) => {
     route.get('/:version',
         (req: Request, res: Response, next: NextFunction) => {
             try {
-                const version = req.params['version']
+                const version = parseFloat(req.params['version'])
                 const start = req.query['start'] as string || "0"
 
                 Cat

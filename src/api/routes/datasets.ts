@@ -13,7 +13,7 @@ export default (app: Router) => {
         (req: Request, res: Response, next: NextFunction) => {
 
             try {
-                const version = req.params['version']
+                const version = parseFloat(req.params['version'])
                 const name = req.params['dataset_name']
                 const start = req.query['start'] as string || "0"
 
