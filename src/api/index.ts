@@ -1,7 +1,7 @@
 import { Router } from "express"
 
-import dataset_info from './routes/dataset_info'
-import datasets from './routes/datasets'
+import dataset_info from './routes/collection_info'
+import datasets from './routes/items'
 import cats from "./routes/cats"
 import anns from "./routes/anns"
 

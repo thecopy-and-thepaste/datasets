@@ -9,19 +9,19 @@ const route = Router()
 export default (app: Router) => {
     app.use('/items', route)
 
-    route.get('/:dataset_name/:version',
+    route.get('/:collection_id/:version',
         (req: Request, res: Response, next: NextFunction) => {
 
             try {
                 const version = parseFloat(req.params['version'])
-                const name = req.params['dataset_name']
+                const collection_id = req.params['collection_id']
                 const start = req.query['start'] as string || "0"
 
                 Dataset
                     .find(
                         {
                             '$and': [
-                                { 'name': name },
+                                { 'collection_id': collection_id },
                                 { 'version': version },
                                 { 'start': parseInt(start) },
                             ]

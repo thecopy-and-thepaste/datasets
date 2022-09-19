@@ -8,9 +8,52 @@ const route = Router()
 export default (app: Router) => {
     app.use('/anns', route)
 
-    route.get('/:version',
+    route.get('/list',
         (req: Request, res: Response, next: NextFunction) => {
             try {
+                Ann
+                    .aggregate([
+                        {
+                            $group: {
+                                _id: {
+                                    "collection_id": "$collection_id",
+                                    "version": "$version"
+                                },
+                                version: { $first: '$version' },
+                                collection_id: { $first: '$collection_id' },
+                                total: { $first: '$total' },
+                                info: { $first: '$info' }
+                            }
+                        },
+                        { $project: { _id: 0 } }
+                    ])
+                    .exec((err, docs) => {
+                        if (err) {
+                            Logger.error(err)
+                            return res
+                                .json({ error: err })
+                                .status(500)
+
+                        }
+
+                        if (docs) {
+                            return res
+                                .json({ data: docs })
+                                .status(200)
+                        }
+                    })
+
+            } catch (e) {
+                Logger.error(e)
+                return next(e)
+            }
+        }
+    )
+
+    route.get('/:collection_id/:version',
+        (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const collection_id = req.params['collection_id']
                 const version = parseFloat(req.params['version'])
 
                 const start = req.query['start'] as string || "0"
@@ -35,7 +78,11 @@ export default (app: Router) => {
 
                 Ann.aggregate([
                     {
-                        $match: { 'version': version, 'start': parseInt(start) }
+                        $match: {
+                            'version': version,
+                            'start': parseInt(start),
+                            'collection_id': collection_id,
+                        }
                     },
                     {
                         $project: {
@@ -81,7 +128,7 @@ export default (app: Router) => {
                         let anns = docs
                             .map(x => x['anns'])
                             .reduce((acc, val) => [...acc, ...val], []);
-                            
+
                         let doc = docs[0]
                         doc['anns'] = anns
 

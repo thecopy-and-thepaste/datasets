@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 
-import { IDataset, IDatasetInfo } from "../interfaces/intefaces"
+import { IDataset, IItem } from "../interfaces/intefaces"
 import config from "../config"
 
-const dataset = config.collections.items
+const dataset = config.collections['collections']
 
 const Item = new mongoose.Schema(
     {
@@ -16,26 +16,23 @@ const Item = new mongoose.Schema(
     },
     { strict: false })
 
-const DatasetItem = new mongoose.Schema(
+const Dataset = new mongoose.Schema(
     {
+        collectionId: {
+            type: String
+        },
         version: {
             type: Number
         },
-        items: {
-            type: [Item]
-        }
-    },
-    { strict: false }
-)
-const Dataset = new mongoose.Schema(
-    {
+        name: {
+            type: String
+        },
         url: {
             type: String
         },
         contributor: {
             type: String
         },
-
         description: {
             type: String
         },
@@ -45,11 +42,8 @@ const Dataset = new mongoose.Schema(
         year: {
             type: Number
         },
-        datasetQty: {
-            type: Number
-        },
-        datasets: {
-            type: [DatasetItem]
+        items: {
+            type: [Item]
         }
 
     },
@@ -57,4 +51,4 @@ const Dataset = new mongoose.Schema(
 )
 
 export default mongoose
-    .model<IDatasetInfo & mongoose.Document>(dataset, Dataset)
+    .model<IDataset & mongoose.Document>(dataset, Dataset)

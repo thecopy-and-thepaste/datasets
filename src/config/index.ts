@@ -18,10 +18,10 @@ export default {
     /**
     * database collections 
     **/
-    collections:{
-        items: process.env.ITEMS_COLLECTION,
-        anns: process.env.ANNS_COLLECTION,
-        cats : process.env.CATS_COLLECTION,
+    collections: {
+        collections: 'collections',
+        anns: 'anns',
+        cats: 'cats'
     },
     logs: {
         level: process.env.LOG_LEVEL || 'debug',
